@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
+import chat_bot
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 
@@ -14,4 +15,4 @@ def message():
     # Get the JSON data sent from the front-end.
     data = request.get_json()
     print(data)
-    return 'Message received!'
+    return jsonify(chat_bot.user_input(data['message']))
