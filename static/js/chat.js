@@ -1,74 +1,53 @@
-function insertMessage(isUser, message, messages) {
+function insertMessage(isUser, message) {
     const chatWindow = document.querySelector('.chat-window');
-    // Create a new message card
     const messageCard = document.createElement('div');
-    // Create a new card body
     const cardBody = document.createElement('div');
     cardBody.className = 'card-body';
-    // Create a new card text
     const cardText = document.createElement('p');
     cardText.className = 'card-text';
-    cardText.textContent = message;
-    // Append card text to card body
+    cardText.textContent = message.includes(":") ? message.split(":")[0] + ":" : message;
     cardBody.appendChild(cardText);
-    if (messages) {
-        // Creates a list with all messages and inserts it inside cardBody
-        const messageList = document.createElement('ul');
-        messageList.className = 'list-group';
 
-        messages.forEach((msg) => {
-            const listItem = document.createElement('li');
-            listItem.className = 'list-group-item';
-            listItem.textContent = msg;
-            messageList.appendChild(listItem);
+    const laptops = message.split(":")[1];
+    if (laptops) {
+        const ul = document.createElement('ul');
+        laptops.split("€").forEach((laptop) => {
+            if (laptop.length > 2) {
+                const li = document.createElement('li');
+                li.textContent = laptop.trim() + " €";
+                ul.appendChild(li);
+            }
         });
-
-        cardBody.appendChild(messageList);
+        cardBody.appendChild(ul);
     }
 
-    // Append message card to chat window
-    chatWindow.appendChild(messageCard);
-    // Append card body to message card
     messageCard.appendChild(cardBody);
-    if (isUser) {
-        messageCard.className = 'card user-message';
-    } else {
-        messageCard.className = 'card bot-message'
-    }
+    messageCard.className = isUser ? 'card user-message' : 'card bot-message';
+    chatWindow.appendChild(messageCard);
     chatWindow.scrollTop = chatWindow.scrollHeight;
-
 }
 
-function sendMessage() {
+async function sendMessage() {
     const inputMessage = document.getElementById('input-message');
-    const message = inputMessage.value;
+    const message = inputMessage.value.trim();
 
-    if (message.trim() !== '') {
-        insertMessage(true, message)
-        // Clear input message
+    if (message !== '') {
+        insertMessage(true, message);
         inputMessage.value = '';
-        // Scroll to the bottom of the chat window
-        responseMessage(message);
+        await responseMessage(message);
     }
-
 }
 
 async function responseMessage(message) {
     try {
-
-        const data = {
-            "message": message
-        }
-        const resp = await axios.post('/api/message', data)
-        const respMessage = resp.data.message
-        const messages = resp.data.messages
-        if (respMessage.trim() !== '') {
-            if (messages) {
-                insertMessage(false, respMessage, messages)
-            }
+        const data = {"message": message};
+        const resp = await axios.post('/api/message', data);
+        const respMessage = resp.data.message.trim();
+        if (respMessage !== '') {
+            insertMessage(false, respMessage);
         }
     } catch (e) {
-        console.log(e)
+        console.log(e);
     }
 }
 
