@@ -58,7 +58,6 @@ def generate_contextual_recommendations(input, previous_recommendations):
     # Combine the current user input with the previous recommendations
     context = filterStopWords(getTokens(input),
                               stopwords.words('english'))  # Preprocess user input (e.g., remove stopwords, tokenize)
-    print(previous_recommendations)
     if len(previous_recommendations) > 0:
         previous_recommendations = filterStopWords(getTokens(previous_recommendations), stop_words=stopwords.words(
             'english'))  # Preprocess previous recommendations (e.g., remove stopwords, tokenize)
@@ -135,7 +134,6 @@ def ramCapacity(laptops, n, brand):
     return heapq.nlargest(n, highest_ram, key=lambda x: x.ram)
 
 
-
 def highStorage(laptops, n, brand):
     if brand == "":
         highest_storage = sorted(laptops, key=lambda x: x.storage, reverse=True)
@@ -170,27 +168,30 @@ def searchNum(tokens):
 
 def user_input(message):
     previous_recommendations = retrieve_previous_recommendations(message)
-    print("Previous recommendations: ")
-    print(previous_recommendations)
-    recommendations = generate_contextual_recommendations(message, previous_recommendations)
-    print("Recommendations: ")
-    print(recommendations)
-    if recommendations:
-        update_conversation_history(message, recommendations)
+    # Saludo del usuario
+    response = {}
+    if any(greeting in message.lower() for greeting in ['hola', 'hi', 'hello']):
+        response["message"] = "Hello! I'm here to help you. How can I assist you today?"
+    elif any(how_are_you in message.lower() for how_are_you in ['how are you']):
+        response["message"] = "I'm fine, thank you. How can I assist you today?"
     else:
-        recommendations["message"] = "Sorry, I don't understand. Could you please rephrase?"
-    return recommendations
+        response = generate_contextual_recommendations(message, previous_recommendations)
+    if response:
+        print(response)
+        update_conversation_history(message, response)
+    else:
+        response["message"] = "Sorry, I don't understand. Could you please rephrase?"
+    return response
 
 
 def recommendation_algorithm(context):
     tokens = context
     print(tokens)
-
-    if any(keyword in tokens for keyword in ['light', 'weight']):
+    if any(keyword in tokens for keyword in ['light', 'weight', 'lightest', 'weightless']):
         brand = searchBrand(tokens)
         computer = lightWeight(Laptop.laptops, brand) if brand else lightWeight(Laptop.laptops, "")
         resp = {
-            "message": f"The {'lightest' if brand else 'lightest'} computer on the market {'from ' + computer.manufacture if brand else ''} weighs {computer.weight}kg."
+            "message": f"The {'lightest' if brand else 'lightest'} computer on the market is: {computer.manufacture} {computer.model} with a weight of  {computer.weight}kg and a price of {computer.price}€."
         }
         return resp
 
@@ -200,19 +201,23 @@ def recommendation_algorithm(context):
         computer = lowPrice(Laptop.laptops, int(num[0]), brand)
         if brand:
             if num[1] == False:
-                resp = {"message": f"The {computer[0].model} is their cheapest computer and has a price of {computer[0].price}€."}
+                resp = {
+                    "message": f"The {computer[0].model} is their cheapest computer and has a price of {computer[0].price}€."}
                 return resp
             else:
                 resp = {"message": f"The {num[0]} cheapest laptops in the market are:"}
-                resp["message"] += " ".join([f"{laptop.price}€ -> {laptop.model} from {laptop.manufacture}" for laptop in computer])
+                resp["message"] += " ".join(
+                    [f"{laptop.price}€ -> {laptop.model} from {laptop.manufacture}" for laptop in computer])
                 return resp
         else:
             if num[1] == False:
-                resp = {"message": f"The {computer[0].model} is the cheapest computer in the market, it is from the brand {computer[0].manufacture} and has a price of {computer[0].price}€."}
+                resp = {
+                    "message": f"The {computer[0].model} is the cheapest computer in the market, it is from the brand {computer[0].manufacture} and has a price of {computer[0].price}€."}
                 return resp
             else:
                 resp = {"message": f"The cheapest {num[0]} laptops in the market are:"}
-                resp["message"] += " ".join([f"{laptop.model} from {laptop.manufacture} -> {laptop.price}€" for laptop in computer])
+                resp["message"] += " ".join(
+                    [f"{laptop.model} from {laptop.manufacture} -> {laptop.price}€" for laptop in computer])
                 return resp
 
     if 'expensive' in tokens:
@@ -221,19 +226,23 @@ def recommendation_algorithm(context):
         computer = highPrice(Laptop.laptops, int(num[0]), brand)
         if brand:
             if num[1] == False:
-                resp = {"message": f"The {computer[0].model} is their most expensive computer and has a price of {computer[0].price}€."}
+                resp = {
+                    "message": f"The {computer[0].model} is their most expensive computer and has a price of {computer[0].price}€."}
                 return resp
             else:
                 resp = {"message": f"The {num[0]} most expensive laptops in the market are:"}
-                resp["message"] += " ".join([f"{laptop.price}€ -> {laptop.model} from {laptop.manufacture}" for laptop in computer])
+                resp["message"] += " ".join(
+                    [f"{laptop.price}€ -> {laptop.model} from {laptop.manufacture}" for laptop in computer])
                 return resp
         else:
             if num[1] == False:
-                resp = {"message": f"The {computer[0].model} is the most expensive computer in the market nowadays, it is from the brand {computer[0].manufacture} and has a price of {computer[0].price}€."}
+                resp = {
+                    "message": f"The {computer[0].model} is the most expensive computer in the market nowadays, it is from the brand {computer[0].manufacture} and has a price of {computer[0].price}€."}
                 return resp
             else:
                 resp = {"message": f"The {num[0]} most expensive laptops in the market are:"}
-                resp["message"] += " ".join([f"{laptop.price}€ -> {laptop.model} from {laptop.manufacture}" for laptop in computer])
+                resp["message"] += " ".join(
+                    [f"{laptop.price}€ -> {laptop.model} from {laptop.manufacture}" for laptop in computer])
                 return resp
 
     if any(keyword in tokens for keyword in ['ram', 'fast']):
@@ -243,19 +252,25 @@ def recommendation_algorithm(context):
         if len(computer) > 0:
             if brand:
                 if num[1] == False:
-                    resp = {"message": f"The {computer[0].model} is their fastest computer, it has a price of {computer[0].price}€ and a speed of {int(computer[0].ram)}GB."}
+                    resp = {
+                        "message": f"The {computer[0].model} is their fastest computer, it has a price of {computer[0].price}€ and a speed of {int(computer[0].ram)}GB."}
                     return resp
                 else:
                     resp = {"message": f"The {num[0]} fastest laptops in the market are:"}
-                    resp["message"] += " ".join([f"{int(laptop.ram)}GB -> {laptop.model} from {laptop.manufacture} priced at {laptop.price}€" for laptop in computer])
+                    resp["message"] += " ".join(
+                        [f"{int(laptop.ram)}GB -> {laptop.model} from {laptop.manufacture} priced at {laptop.price}€"
+                         for laptop in computer])
                     return resp
             else:
                 if num[1] == False:
-                    resp = {"message": f"The {computer[0].model} is the fastest computer in the market nowadays, it's from the brand {computer[0].manufacture}, has a price of {computer[0].price}€ and a speed of {int(computer[0].ram)}GB."}
+                    resp = {
+                        "message": f"The {computer[0].model} is the fastest computer in the market nowadays, it's from the brand {computer[0].manufacture}, has a price of {computer[0].price}€ and a speed of {int(computer[0].ram)}GB."}
                     return resp
                 else:
                     resp = {"message": f"The {num[0]} fastest laptops in the market are:"}
-                    resp["message"] += " ".join([f"{int(laptop.ram)}GB -> {laptop.model} from {laptop.manufacture} priced at {laptop.price}€" for laptop in computer])
+                    resp["message"] += " ".join(
+                        [f"{int(laptop.ram)}GB -> {laptop.model} from {laptop.manufacture} priced at {laptop.price}€"
+                         for laptop in computer])
                     return resp
         else:
             resp = {"message": "Sorry, I could not find any laptops."}
@@ -267,24 +282,31 @@ def recommendation_algorithm(context):
         computer = highStorage(Laptop.laptops, int(num[0]), brand)
         if brand:
             if num[1] == False:
-                resp = {"message": f"The {computer[0].model} is their computer with the most memory, it has a price of {computer[0].price}€ and a memory of {int(computer[0].storage)}GB."}
+                resp = {
+                    "message": f"The {computer[0].model} is their computer with the most memory, it has a price of {computer[0].price}€ and a memory of {int(computer[0].storage)}GB."}
                 return resp
             else:
                 resp = {"message": f"The laptops in the market with the most memory are:"}
-                resp["message"] += " ".join([f"{int(laptop.storage)}GB -> {laptop.model} from {laptop.manufacture} priced at {laptop.price}€" for laptop in computer])
+                resp["message"] += " ".join(
+                    [f"{int(laptop.storage)}GB -> {laptop.model} from {laptop.manufacture} priced at {laptop.price}€"
+                     for laptop in computer])
                 return resp
         else:
             if num[1] == False:
-                resp = {"message": f"The {computer[0].model} is the computer with the most memory in the market nowadays, it's from the brand {computer[0].manufacture}, has a price of {computer[0].price}€ and a storage of {int(computer[0].storage)}GB."}
+                resp = {
+                    "message": f"The {computer[0].model} is the computer with the most memory in the market nowadays, it's from the brand {computer[0].manufacture}, has a price of {computer[0].price}€ and a storage of {int(computer[0].storage)}GB."}
                 return resp
             else:
                 resp = {"message": f"The laptops in the market with the most memory are:"}
-                resp["message"] += " ".join([f"{int(laptop.storage)}GB -> {laptop.model} from {laptop.manufacture} priced at {laptop.price}€" for laptop in computer])
+                resp["message"] += " ".join(
+                    [f"{int(laptop.storage)}GB -> {laptop.model} from {laptop.manufacture} priced at {laptop.price}€"
+                     for laptop in computer])
                 return resp
 
     if 'gaming' in tokens:
         computer = gaming(Laptop.laptops)
-        resp = {"message": f"The best computer we have found for gaming is the {computer[0].model} with {computer[0].ram}GB of RAM and {computer[0].storage}GB of storage."}
+        resp = {
+            "message": f"The best computer we have found for gaming is the {computer[0].model} with {computer[0].ram}GB of RAM and {computer[0].storage}GB of storage."}
         return resp
 
     resp = {"message": "No specific recommendation found based on the given context."}

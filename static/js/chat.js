@@ -14,6 +14,7 @@ function insertMessage(isUser, message) {
         laptops.split("€").forEach((laptop) => {
             if (laptop.length > 2) {
                 const li = document.createElement('li');
+
                 li.textContent = laptop.trim() + " €";
                 ul.appendChild(li);
             }

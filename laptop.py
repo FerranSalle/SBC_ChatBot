@@ -28,9 +28,9 @@ class Laptop:
             show_storage = str(self.storage / 10000.0) + "MB"
         else:
             show_storage = str(self.storage) + "GB"
-        return "Manufacture: " + self.manufacture + "\nModel: " + self.model + "\nCategory: " + self.category + "\nPrice: " + str(
-            self.price) + "\nProcessor: " + self.processor + "\nRAM: " + str(self.ram) + "GB\nScreen Size: " + str(
-            self.screen_size) + "\nStorage: " + show_storage + " type: " + self.storage_type + "\nGraphics: " + self.graphics + "\nOS: " + self.os + "\nWeight: " + self.weight
+        return "Manufacture ->" + self.manufacture + "\nModel->" + self.model + "\nCategory-> " + self.category + "\nProcessor-> " + self.processor + "\nRAM-> " + str(self.ram) + "GB\nScreen Size-> " + str(
+            self.screen_size) + "\nStorage-> " + show_storage + " type-> " + self.storage_type + "\nGraphics-> " + self.graphics + "\nOS-> " + self.os + "\nWeight-> " + self.weight+ "\nPrice->" + str(
+            self.price) + "€"
 
 
 def create_list_of_laptops(dataset):
