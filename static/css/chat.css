@@ -14,8 +14,19 @@ main {
 
 /* Customize chat window styling */
 .chat-window {
-    height: 400px;
+    place-content: center;
+    height: 70vh;
     overflow-y: scroll;
+}
+
+/* Style the scrollbar background */
+::-webkit-scrollbar {
+  background: #343a40;
+}
+
+/* Style the scrollbar handle */
+::-webkit-scrollbar-thumb {
+  background: #343a40;
 }
 
 .user-message {
@@ -24,6 +35,7 @@ main {
     padding: 8px;
     border-radius: 8px;
     margin-bottom: 8px;
+    width: auto;
 }
 
 .bot-message {
@@ -32,6 +44,7 @@ main {
     padding: 8px;
     border-radius: 8px;
     margin-bottom: 8px;
+    width: auto;
 }
 
 .card {
@@ -54,4 +67,8 @@ main {
     width: 100%;
     padding: 10px;
     background-color: #343a40;
+}
+
+.names {
+    text-align: center;
 }
